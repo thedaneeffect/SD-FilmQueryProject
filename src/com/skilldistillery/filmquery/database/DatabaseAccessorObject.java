@@ -44,7 +44,7 @@ public class DatabaseAccessorObject implements DatabaseAccessor {
 		film.setTitle(res.getString("title"));
 		film.setDescription(res.getString("description"));
 		film.setReleaseYear(res.getDate("release_year"));
-		film.setLanguageId(res.getInt("language_id"));
+		film.setLanguage(res.getString("language"));
 		film.setRentalDuration(res.getInt("rental_duration"));
 		film.setRentalRate(res.getDouble("rental_rate"));
 		film.setLength(res.getInt("length"));
@@ -57,7 +57,7 @@ public class DatabaseAccessorObject implements DatabaseAccessor {
 
 	@Override
 	public Film findFilmById(int filmId) throws SQLException {
-		try (PreparedStatement stmt = this.conn.prepareStatement("SELECT * FROM film WHERE id=? LIMIT 1")) {
+		try (PreparedStatement stmt = this.conn.prepareStatement("SELECT film.*, language.name as 'language' FROM film LEFT JOIN language ON film.language_id = language.id WHERE film.id = ? LIMIT 1")) {
 			stmt.setInt(1, filmId);
 			ResultSet res = stmt.executeQuery();
 			if (res.next()) {
@@ -74,7 +74,7 @@ public class DatabaseAccessorObject implements DatabaseAccessor {
 		List<Film> films = new ArrayList<>();
 		
 		try (PreparedStatement stmt = this.conn
-				.prepareStatement("SELECT * FROM film WHERE title LIKE ? OR description LIKE ?")) {
+				.prepareStatement("SELECT film.*, language.name as 'language' FROM film LEFT JOIN language ON film.language_id=language.id WHERE film.title LIKE ? OR film.description LIKE ?")) {
 			stmt.setString(1, keyword);
 			stmt.setString(2, keyword);
 

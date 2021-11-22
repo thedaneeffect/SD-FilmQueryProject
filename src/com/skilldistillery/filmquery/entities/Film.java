@@ -10,7 +10,7 @@ public class Film {
 	private String title;
 	private String description;
 	private Date releaseYear;
-	private int languageId;
+	private String language;
 	private int rentalDuration;
 	private double rentalRate;
 	private int length;
@@ -51,12 +51,12 @@ public class Film {
 		this.releaseYear = releaseYear;
 	}
 
-	public int getLanguageId() {
-		return languageId;
+	public String getLanguage() {
+		return language;
 	}
 
-	public void setLanguageId(int languageId) {
-		this.languageId = languageId;
+	public void setLanguage(String languageId) {
+		this.language = languageId;
 	}
 
 	public int getRentalDuration() {
@@ -117,7 +117,7 @@ public class Film {
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(description, id, languageId, length, title, rating, releaseYear, rentalDuration, rentalRate,
+		return Objects.hash(description, id, language, length, title, rating, releaseYear, rentalDuration, rentalRate,
 				replacementCost);
 	}
 
@@ -130,7 +130,7 @@ public class Film {
 		if (getClass() != obj.getClass())
 			return false;
 		Film other = (Film) obj;
-		return Objects.equals(description, other.description) && id == other.id && languageId == other.languageId
+		return Objects.equals(description, other.description) && id == other.id && language.equals(other.language)
 				&& length == other.length && Objects.equals(title, other.title) && Objects.equals(rating, other.rating)
 				&& Objects.equals(releaseYear, other.releaseYear) && rentalDuration == other.rentalDuration
 				&& Double.doubleToLongBits(rentalRate) == Double.doubleToLongBits(other.rentalRate)
@@ -140,7 +140,7 @@ public class Film {
 	@Override
 	public String toString() {
 		return "Film [id=" + id + ", title=" + title + ", description=" + description + ", releaseYear=" + releaseYear
-				+ ", languageId=" + languageId + ", rentalDuration=" + rentalDuration + ", rentalRate=" + rentalRate
+				+ ", language=" + language + ", rentalDuration=" + rentalDuration + ", rentalRate=" + rentalRate
 				+ ", length=" + length + ", replacementCost=" + replacementCost + ", rating=" + rating
 				+ ", specialFeatures=" + specialFeatures + ", actors=" + actors + "]";
 	}

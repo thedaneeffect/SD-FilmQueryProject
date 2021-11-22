@@ -3,6 +3,7 @@ package com.skilldistillery.filmquery.app;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Scanner;
+import java.util.stream.Stream;
 
 import com.skilldistillery.filmquery.database.DatabaseAccessor;
 import com.skilldistillery.filmquery.database.DatabaseAccessorObject;
@@ -32,6 +33,11 @@ public class FilmQueryApp {
 		System.out.println("  Year: " + film.getReleaseYear().toString().substring(0, 4));
 		System.out.println("  Rating: " + film.getRating());
 		System.out.println("  Description: " + film.getDescription());
+		System.out.println("  Language: " + film.getLanguage());
+
+		Stream<String> actorNames = film.getActors().stream().map(a -> a.getFirstName() + " " + a.getLastName());
+		System.out.print("  Cast: " + String.join(", ", actorNames.toList()));
+		System.out.println();
 	}
 
 	private void promptFilmByID(Scanner in) throws SQLException {
