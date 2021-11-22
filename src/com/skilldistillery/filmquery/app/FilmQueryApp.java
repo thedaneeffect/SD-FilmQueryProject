@@ -10,7 +10,7 @@ import com.skilldistillery.filmquery.entities.Film;
 
 public class FilmQueryApp {
 
-	DatabaseAccessor db;
+	private final DatabaseAccessor db;
 
 	public static void main(String[] args) throws SQLException {
 		FilmQueryApp app = new FilmQueryApp();
@@ -29,9 +29,33 @@ public class FilmQueryApp {
 
 	private static void printFilm(Film film) {
 		System.out.println("Title: " + film.getTitle());
-		System.out.println("Year: " + film.getReleaseYear().toString().substring(0, 4));
-		System.out.println("Rating: " + film.getRating());
-		System.out.println("Description: " + film.getDescription());
+		System.out.println("  Year: " + film.getReleaseYear().toString().substring(0, 4));
+		System.out.println("  Rating: " + film.getRating());
+		System.out.println("  Description: " + film.getDescription());
+	}
+
+	private void promptFilmByID(Scanner in) throws SQLException {
+		int id = this.readInt("ID", in);
+		Film film = db.findFilmById(id);
+
+		if (film != null) {
+			printFilm(film);
+		} else {
+			System.out.println("Film ID not found: " + id);
+		}
+	}
+
+	private void promptFilmByKeyword(Scanner in) throws SQLException {
+		String keyword = this.readString("Keyword", in);
+		List<Film> films = db.findFilmByKeyword(keyword);
+
+		if (!films.isEmpty()) {
+			for (Film film : films) {
+				printFilm(film);
+			}
+		} else {
+			System.out.println("No films found.");
+		}
 	}
 
 	private void startUserInterface(Scanner in) {
@@ -39,43 +63,16 @@ public class FilmQueryApp {
 			showMenuOptions();
 
 			try {
-				int option = readInt(in);
-
+				int option = readInt("Option", in);
 				switch (option) {
-				case 1: {// Film by ID
-					System.out.println("Please enter a whole number ID:");
-					int id = readInt(in);
-
-					Film film = db.findFilmById(id);
-
-					if (film != null) {
-						printFilm(film);
-					} else {
-						System.out.println("Film ID not found: " + id);
-					}
+				case 1:
+					this.promptFilmByID(in);
 					break;
-				}
-
-				case 2: {// Film by Keyword
-					System.out.println("Please enter a keyword:");
-					String keyword = readString(in);
-
-					List<Film> films = db.findFilmByKeyword(keyword);
-
-					if (films.size() > 0) {
-						for (Film film : films) {
-							printFilm(film);
-						}
-					} else {
-						System.out.println("No films found.");
-					}
-
+				case 2:
+					this.promptFilmByKeyword(in);
 					break;
-				}
-
-				case 3: // Quit
+				case 3:
 					break menu;
-
 				default:
 					System.out.println("Invalid option.");
 				}
@@ -89,32 +86,18 @@ public class FilmQueryApp {
 
 	private void showMenuOptions() {
 		System.out.println("Please select an option:");
-		System.out.println("\t1) Lookup film by ID");
-		System.out.println("\t2) Lookup film by Keyword");
-		System.out.println("\t3) Exit");
+		System.out.println("    1) Lookup film by ID");
+		System.out.println("    2) Lookup film by Keyword");
+		System.out.println("    3) Exit");
 	}
 
-	/**
-	 * Causes the prompt "> " to show, indicating the application is awaiting user
-	 * input.
-	 * 
-	 * @param in the scanner.
-	 * @return the user input.
-	 */
-	private String readString(Scanner in) {
-		System.out.print("> ");
+	private String readString(String prompt, Scanner in) {
+		System.out.print(prompt + ": ");
 		return in.nextLine();
 	}
 
-	/**
-	 * Causes the prompt "> " to show indicating the application is awaiting user
-	 * input.
-	 * 
-	 * @param in the scanner.
-	 * @return the user input.
-	 */
-	private int readInt(Scanner in) throws NumberFormatException {
-		return Integer.parseInt(this.readString(in));
+	private int readInt(String prompt, Scanner in) throws NumberFormatException {
+		return Integer.parseInt(this.readString(prompt, in));
 	}
 
 }
