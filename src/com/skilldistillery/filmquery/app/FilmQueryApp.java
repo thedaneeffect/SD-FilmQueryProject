@@ -35,13 +35,14 @@ public class FilmQueryApp {
 
 				switch (option) {
 				case 1: // Film by ID
+					System.out.println("Please enter a whole number ID:");
 					int id = readInt(in);
-					
+
 					Film film = db.findFilmById(id);
-					
+
 					if (film != null) {
 						System.out.println("Title: " + film.getTitle());
-						System.out.println("Year: " + film.getReleaseYear());
+						System.out.println("Year: " + film.getReleaseYear().toString().substring(0, 5));
 						System.out.println("Rating: " + film.getRating());
 						System.out.println("Description: " + film.getDescription());
 					} else {
@@ -49,6 +50,7 @@ public class FilmQueryApp {
 					}
 					break;
 				case 2: // Film by Keyword
+					System.out.println("Please enter a keyword:");
 					String keyword = readString(in);
 					break;
 				case 3: // Quit
@@ -63,9 +65,10 @@ public class FilmQueryApp {
 	}
 
 	private void showMenuOptions() {
-		System.out.println("1) Lookup film by ID");
-		System.out.println("2) Lookup film by Keyword");
-		System.out.println("3) Exit");
+		System.out.println("Please select an option:");
+		System.out.println("\t1) Lookup film by ID");
+		System.out.println("\t2) Lookup film by Keyword");
+		System.out.println("\t3) Exit");
 	}
 
 	/**
