@@ -70,9 +70,9 @@ public class DatabaseAccessorObject implements DatabaseAccessor {
 	@Override
 	public List<Film> findFilmByKeyword(String keyword) throws SQLException {
 		keyword = "%" + keyword + "%";
-
+		
 		List<Film> films = new ArrayList<>();
-
+		
 		try (PreparedStatement stmt = this.conn
 				.prepareStatement("SELECT * FROM film WHERE title LIKE ? OR description LIKE ?")) {
 			stmt.setString(1, keyword);
@@ -83,7 +83,7 @@ public class DatabaseAccessorObject implements DatabaseAccessor {
 
 			}
 		}
-		return null;
+		return films;
 	}
 
 	@Override

@@ -1,6 +1,7 @@
 package com.skilldistillery.filmquery.app;
 
 import java.sql.SQLException;
+import java.util.List;
 import java.util.Scanner;
 
 import com.skilldistillery.filmquery.database.DatabaseAccessor;
@@ -26,6 +27,13 @@ public class FilmQueryApp {
 		}
 	}
 
+	private static void printFilm(Film film) {
+		System.out.println("Title: " + film.getTitle());
+		System.out.println("Year: " + film.getReleaseYear().toString().substring(0, 5));
+		System.out.println("Rating: " + film.getRating());
+		System.out.println("Description: " + film.getDescription());
+	}
+
 	private void startUserInterface(Scanner in) {
 		menu: while (true) {
 			showMenuOptions();
@@ -34,27 +42,42 @@ public class FilmQueryApp {
 				int option = readInt(in);
 
 				switch (option) {
-				case 1: // Film by ID
+				case 1: {// Film by ID
 					System.out.println("Please enter a whole number ID:");
 					int id = readInt(in);
 
 					Film film = db.findFilmById(id);
 
 					if (film != null) {
-						System.out.println("Title: " + film.getTitle());
-						System.out.println("Year: " + film.getReleaseYear().toString().substring(0, 5));
-						System.out.println("Rating: " + film.getRating());
-						System.out.println("Description: " + film.getDescription());
+						printFilm(film);
 					} else {
 						System.out.println("Film ID not found: " + id);
 					}
 					break;
-				case 2: // Film by Keyword
+				}
+
+				case 2: {// Film by Keyword
 					System.out.println("Please enter a keyword:");
 					String keyword = readString(in);
+
+					List<Film> films = db.findFilmByKeyword(keyword);
+
+					if (films.size() > 0) {
+						for (Film film : films) {
+							printFilm(film);
+						}
+					} else {
+						System.out.println("No films found.");
+					}
+
 					break;
+				}
+
 				case 3: // Quit
 					break menu;
+
+				default:
+					System.out.println("Invalid option.");
 				}
 			} catch (Exception e) {
 				e.printStackTrace();
