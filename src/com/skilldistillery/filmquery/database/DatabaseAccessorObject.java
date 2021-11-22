@@ -31,29 +31,56 @@ public class DatabaseAccessorObject implements DatabaseAccessor {
 		this.conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/sdvid?useSSL=false", "student", "student");
 	}
 
+	/**
+	 * A utility method used to reduce typing.
+	 * 
+	 * @param film the film being populated
+	 * @param res  the result set used to populate the film
+	 * @return the film provided
+	 * @throws SQLException
+	 */
+	private final Film populate(Film film, ResultSet res) throws SQLException {
+		film.setId(res.getInt("id"));
+		film.setTitle(res.getString("title"));
+		film.setDescription(res.getString("description"));
+		film.setReleaseYear(res.getDate("release_year"));
+		film.setLanguageId(res.getInt("language_id"));
+		film.setRentalDuration(res.getInt("rental_duration"));
+		film.setRentalRate(res.getDouble("rental_rate"));
+		film.setLength(res.getInt("length"));
+		film.setReplacementCost(res.getDouble("replacement_cost"));
+		film.setRating(res.getString("rating"));
+		film.setSpecialFeatures(Stream.of(res.getString("special_features").split(",")).collect(Collectors.toSet()));
+		film.setActors(this.findActorsByFilmId(film.getId()));
+		return film;
+	}
+
 	@Override
 	public Film findFilmById(int filmId) throws SQLException {
 		try (PreparedStatement stmt = this.conn.prepareStatement("SELECT * FROM film WHERE id=? LIMIT 1")) {
 			stmt.setInt(1, filmId);
-
 			ResultSet res = stmt.executeQuery();
-
 			if (res.next()) {
-				Film film = new Film();
-				film.setId(res.getInt("id"));
-				film.setTitle(res.getString("title"));
-				film.setDescription(res.getString("description"));
-				film.setReleaseYear(res.getDate("release_year"));
-				film.setLanguageId(res.getInt("language_id"));
-				film.setRentalDuration(res.getInt("rental_duration"));
-				film.setRentalRate(res.getDouble("rental_rate"));
-				film.setLength(res.getInt("length"));
-				film.setReplacementCost(res.getDouble("replacement_cost"));
-				film.setRating(res.getString("rating"));
-				film.setSpecialFeatures(
-						Stream.of(res.getString("special_features").split(",")).collect(Collectors.toSet()));
-				film.setActors(this.findActorsByFilmId(film.getId()));
-				return film;
+				return populate(new Film(), res);
+			}
+		}
+		return null;
+	}
+
+	@Override
+	public List<Film> findFilmByKeyword(String keyword) throws SQLException {
+		keyword = "%" + keyword + "%";
+
+		List<Film> films = new ArrayList<>();
+
+		try (PreparedStatement stmt = this.conn
+				.prepareStatement("SELECT * FROM film WHERE title LIKE ? OR description LIKE ?")) {
+			stmt.setString(1, keyword);
+			stmt.setString(2, keyword);
+
+			for (ResultSet res = stmt.executeQuery(); res.next();) {
+				films.add(populate(new Film(), res));
+
 			}
 		}
 		return null;
