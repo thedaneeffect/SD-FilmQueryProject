@@ -29,7 +29,7 @@ public class FilmQueryApp {
 
 	private static void printFilm(Film film) {
 		System.out.println("Title: " + film.getTitle());
-		System.out.println("Year: " + film.getReleaseYear().toString().substring(0, 5));
+		System.out.println("Year: " + film.getReleaseYear().toString().substring(0, 4));
 		System.out.println("Rating: " + film.getRating());
 		System.out.println("Description: " + film.getDescription());
 	}
